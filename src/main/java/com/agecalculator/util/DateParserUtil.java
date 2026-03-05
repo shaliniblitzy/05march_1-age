@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
+import java.util.regex.Pattern;
 
 import com.agecalculator.exception.InvalidDateException;
 
@@ -64,6 +65,19 @@ public class DateParserUtil {
                     .withResolverStyle(ResolverStyle.STRICT);
 
     /**
+     * Compiled regex pattern that matches the structural DD/MM/YYYY format:
+     * exactly two digits, a forward slash, two digits, a forward slash, and four digits.
+     *
+     * <p>This pattern validates ONLY the syntactic structure of the input string —
+     * it does NOT validate whether the day/month/year values represent a real calendar
+     * date. For example, {@code "31/02/2020"} matches this pattern (correct format)
+     * but fails strict calendar resolution (impossible date). This two-phase approach
+     * enables distinct error messages for format errors vs. impossible-date errors,
+     * as required by the application's error message specification.</p>
+     */
+    private static final Pattern DD_MM_YYYY_PATTERN = Pattern.compile("^\\d{2}/\\d{2}/\\d{4}$");
+
+    /**
      * Private constructor to prevent instantiation of this utility class.
      *
      * <p>All functionality is provided through the static {@link #parse(String)}
@@ -76,15 +90,25 @@ public class DateParserUtil {
     /**
      * Parses a date string in {@code DD/MM/YYYY} format into a {@link LocalDate}.
      *
-     * <p>This method performs two layers of validation:</p>
+     * <p>This method performs three layers of validation:</p>
      * <ol>
      *   <li><strong>Null/empty guard</strong> — rejects {@code null} references and
      *       blank strings immediately with a descriptive error message.</li>
-     *   <li><strong>Strict format parsing</strong> — delegates to
+     *   <li><strong>Format structure check</strong> — validates that the input matches
+     *       the syntactic {@code DD/MM/YYYY} pattern (two-digit day, slash, two-digit
+     *       month, slash, four-digit year) using a compiled regex. Inputs that fail
+     *       this check receive a format-specific error message.</li>
+     *   <li><strong>Strict calendar parsing</strong> — delegates to
      *       {@link LocalDate#parse(CharSequence, DateTimeFormatter)} with the strict
-     *       formatter, which rejects malformed strings, wrong separators, invalid
-     *       month/day values, and impossible calendar dates in a single operation.</li>
+     *       formatter, which rejects logically impossible calendar dates (e.g.,
+     *       February 30, April 31, February 29 on non-leap years). Inputs that pass
+     *       the format check but fail calendar resolution receive a distinct
+     *       calendar-validity error message.</li>
      * </ol>
+     *
+     * <p>This two-phase parse approach enables differentiated error messaging:
+     * format errors (e.g., "abc", "2020-03-15") produce one message, while
+     * impossible calendar dates (e.g., "31/02/2020") produce a distinct message.</p>
      *
      * <p><strong>Note:</strong> This method does NOT validate temporal constraints
      * (e.g., whether the date is in the future). Such validation is the responsibility
@@ -103,12 +127,18 @@ public class DateParserUtil {
             throw new InvalidDateException("Date input cannot be null or empty.");
         }
 
-        // Attempt strict parsing; wrap any JDK parse exception in our custom exception
+        // Phase 1: Validate syntactic format (DD/MM/YYYY structural pattern)
+        if (!DD_MM_YYYY_PATTERN.matcher(dateStr).matches()) {
+            throw new InvalidDateException(
+                    "Invalid date format. Please use DD/MM/YYYY format.");
+        }
+
+        // Phase 2: Strict calendar resolution — format is correct, validate calendar validity
         try {
             return LocalDate.parse(dateStr, DATE_FORMATTER);
         } catch (DateTimeParseException e) {
             throw new InvalidDateException(
-                    "Invalid date format. Please use DD/MM/YYYY format.", e);
+                    "Invalid date. Please enter a valid calendar date.", e);
         }
     }
 }

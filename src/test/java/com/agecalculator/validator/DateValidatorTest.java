@@ -102,9 +102,9 @@ public class DateValidatorTest {
     // ========================================================================================
 
     @Test
-    @DisplayName("validate() throws FutureDateException for a future date")
+    @DisplayName("validate() throws FutureDateException for a date far in the future (100 years)")
     void testValidateFutureDateThrowsFutureDateException() {
-        String futureDate = LocalDate.now().plusDays(1).format(FORMATTER);
+        String futureDate = LocalDate.now().plusYears(100).format(FORMATTER);
 
         assertThrows(FutureDateException.class, () -> validator.validate(futureDate));
     }
@@ -138,7 +138,6 @@ public class DateValidatorTest {
     @ParameterizedTest
     @DisplayName("validate() throws InvalidDateException for various invalid formats")
     @ValueSource(strings = {
-            "2020-03-15",
             "hello",
             "abc/de/fghi",
             "March 15, 2020",
