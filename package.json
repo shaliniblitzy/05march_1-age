@@ -1,0 +1,12 @@
+{
+  "name": "05march_1-age",
+  "version": "1.0.0",
+  "description": "A Node.js tutorial server with Express.js endpoints",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^5.0.1"
+  }
+}
