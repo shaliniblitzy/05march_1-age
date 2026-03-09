@@ -67,7 +67,7 @@ This runs `node index.js` under the hood, which boots the Express.js server.
 
 By default, the server listens on **port 3000**. Once started, you will see the following confirmation message in your terminal:
 
-```
+```text
 Server is running on http://localhost:3000
 ```
 
@@ -81,7 +81,7 @@ PORT=8080 npm start
 
 This starts the server on port 8080 instead of the default 3000. The confirmation message will reflect the custom port:
 
-```
+```text
 Server is running on http://localhost:8080
 ```
 
@@ -110,7 +110,7 @@ curl http://localhost:3000/
 
 **Response:**
 
-```
+```text
 Hello world
 ```
 
@@ -126,7 +126,7 @@ curl http://localhost:3000/evening
 
 **Response:**
 
-```
+```text
 Good evening
 ```
 
@@ -134,7 +134,7 @@ Good evening
 
 The project follows a flat, single-file architecture for tutorial simplicity. All files reside in the project root directory:
 
-```
+```text
 express-tutorial-server/
 ├── .gitignore          # Version control exclusion patterns
 ├── index.js            # Express.js server entry point
