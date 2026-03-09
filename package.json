@@ -1,0 +1,24 @@
+{
+  "name": "express-tutorial-server",
+  "version": "1.0.0",
+  "description": "A simple Express.js tutorial server with two GET endpoints",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [
+    "express",
+    "tutorial",
+    "nodejs",
+    "server"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.2.1"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  }
+}
