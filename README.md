@@ -150,10 +150,9 @@ The application also displays supplementary age details:
 Enter your Date of Birth (DD/MM/YYYY): 15/08/1998
 Your age is 27 years, 6 months, and 15 days.
 
-Additional Details:
-  Total months: 330
-  Total days: 10,090
-  Days until next birthday: 138
+Total months: 330
+Total days: 10090
+Days until next birthday: 138
 ```
 
 > **Note:** The exact numbers in the examples above depend on the current date when the application is run.
@@ -200,7 +199,7 @@ The application enforces a strict four-layer validation pipeline:
 | **Malformed format** | `abc`, `1998-08-15`, `15-08-1998` | `Invalid date format. Please use DD/MM/YYYY.` |
 | **Impossible calendar date** | `31/02/2020`, `32/01/2000`, `00/05/1990` | `Invalid date. Please enter a real calendar date.` |
 | **Future date** | Any date after today | `Date of Birth cannot be a future date.` |
-| **Empty or blank input** | ` `, `""` | `Invalid date format. Please use DD/MM/YYYY.` |
+| **Empty or blank input** | ` `, `""` | `Date of Birth input cannot be empty.` |
 
 ### Leap Year Handling
 

@@ -180,7 +180,45 @@ class AgeCalculatorTest {
     }
 
     // ────────────────────────────────────────────────────────────────────────────
-    // Test 6: Exactly One Year Ago — Boundary coverage
+    // Test 6: Year Boundary — DOB on Dec 31, verifies year rollover
+    // ────────────────────────────────────────────────────────────────────────────
+
+    /**
+     * Verifies that age calculation correctly handles the year boundary — a DOB on
+     * December 31 tested across a calendar year rollover into January and beyond.
+     *
+     * <p>This test creates a DOB of December 31 from two years before the current year.
+     * This guarantees that at least one full year has always elapsed regardless of
+     * the current date (even on January 1, the age would be 1 year and 1 day).
+     * The test validates that {@code Period.between()} correctly increments the year
+     * component across the Dec 31 → Jan 1 calendar boundary.</p>
+     *
+     * <p><strong>Purpose:</strong> Validates that {@code Period.between()} correctly
+     * counts the year component across the Dec 31 → Jan 1 calendar year rollover.</p>
+     */
+    @Test
+    @DisplayName("Calculate age for DOB on Dec 31 verifies year rollover boundary")
+    void testYearBoundaryDecember31() {
+        // Arrange — DOB is December 31, two years before the current year.
+        // This ensures at least 1 full year has passed on any date in the current year.
+        LocalDate today = LocalDate.now();
+        LocalDate dob = LocalDate.of(today.getYear() - 2, 12, 31);
+
+        // Act
+        AgeResult result = AgeCalculator.calculateAge(dob);
+
+        // Assert — at least 1 full year has passed across the Dec 31 → Jan 1 boundary
+        assertNotNull(result, "AgeResult should not be null for Dec 31 DOB");
+        assertTrue(result.getYears() >= 1,
+                "Years should be at least 1 for DOB Dec 31 two years before current year");
+        assertTrue(result.getMonths() >= 0 && result.getMonths() <= 11,
+                "Months should be between 0 and 11");
+        assertTrue(result.getDays() >= 0 && result.getDays() <= 30,
+                "Days should be between 0 and 30");
+    }
+
+    // ────────────────────────────────────────────────────────────────────────────
+    // Test 7: Exactly One Year Ago — Boundary coverage
     // ────────────────────────────────────────────────────────────────────────────
 
     /**
