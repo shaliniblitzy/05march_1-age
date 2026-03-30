@@ -188,20 +188,36 @@ class AgeCalculatorTest {
      * age is exactly 1 year, 0 months, and 0 days.
      *
      * <p>This is a deterministic test — the relative difference between one year
-     * ago and today always produces a {@code Period} of exactly (1, 0, 0).</p>
+     * ago and today produces a {@code Period} of exactly (1, 0, 0) on most days.</p>
+     *
+     * <p><strong>Leap year edge case:</strong> If today is February 29 (a leap year),
+     * {@code minusYears(1)} adjusts to February 28 (since Feb 29 does not exist in
+     * the prior non-leap year). In that scenario, {@code Period.between(Feb 28, Feb 29)}
+     * returns (1 year, 0 months, 1 day), so the expected days value is 1 instead of 0.
+     * A guard clause handles this edge case to ensure the test is robust year-round.</p>
      */
     @Test
     @DisplayName("Calculate age for DOB exactly one year ago returns 1 year, 0 months, 0 days")
     void testExactlyOneYearAgo() {
         // Arrange — DOB is exactly one year ago
-        LocalDate dob = LocalDate.now().minusYears(1);
+        LocalDate today = LocalDate.now();
+        LocalDate dob = today.minusYears(1);
 
         // Act
         AgeResult result = AgeCalculator.calculateAge(dob);
 
-        // Assert — exact values since the relative offset is deterministic
+        // Assert — years and months are always deterministic
         assertEquals(1, result.getYears(), "Years should be 1 for DOB exactly 1 year ago");
         assertEquals(0, result.getMonths(), "Months should be 0 for DOB exactly 1 year ago");
-        assertEquals(0, result.getDays(), "Days should be 0 for DOB exactly 1 year ago");
+
+        // Guard: if today is Feb 29 (leap year), minusYears(1) adjusts to Feb 28,
+        // so Period.between(Feb 28, Feb 29) yields 1 day instead of 0
+        if (today.getMonthValue() == 2 && today.getDayOfMonth() == 29) {
+            assertEquals(1, result.getDays(),
+                    "Days should be 1 when today is Feb 29 (leap day edge case)");
+        } else {
+            assertEquals(0, result.getDays(),
+                    "Days should be 0 for DOB exactly 1 year ago");
+        }
     }
 }
