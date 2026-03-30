@@ -54,27 +54,41 @@ public class DateValidator {
      *
      * <p>This method performs the following validation steps in order:</p>
      * <ol>
+     *     <li>Rejects null or blank input with a descriptive error message</li>
      *     <li>Parses the input string using a strict {@link DateTimeFormatter} configured
-     *         with {@link ResolverStyle#STRICT} — this automatically rejects malformed
-     *         input and impossible calendar dates (e.g., 31/02/2020)</li>
+     *         with {@link ResolverStyle#STRICT}. If parsing fails, a regex pre-check
+     *         distinguishes format errors (e.g., "abc") from impossible calendar dates
+     *         (e.g., 31/02/2020) to provide a context-specific error message</li>
      *     <li>Checks that the parsed date is not after the current system date —
      *         future dates are rejected as invalid Dates of Birth</li>
      * </ol>
      *
-     * @param dobString the Date of Birth string in DD/MM/YYYY format (e.g., "15/08/1998")
+     * @param dobString the Date of Birth string in DD/MM/YYYY format (e.g., "15/08/1998"),
+     *                  must not be null or blank
      * @return the parsed and validated {@link LocalDate} representing the Date of Birth
      * @throws InvalidDateException if the input fails any validation check:
      *         <ul>
+     *             <li>Empty input: "Date of Birth input cannot be empty."</li>
      *             <li>Format error: "Invalid date format. Please use DD/MM/YYYY."</li>
      *             <li>Impossible date: "Invalid date. Please enter a real calendar date."</li>
      *             <li>Future date: "Date of Birth cannot be a future date."</li>
      *         </ul>
      */
     public static LocalDate parseAndValidate(String dobString) throws InvalidDateException {
+        if (dobString == null || dobString.isBlank()) {
+            throw new InvalidDateException("Date of Birth input cannot be empty.");
+        }
+
         LocalDate dob;
         try {
             dob = LocalDate.parse(dobString, DATE_FORMATTER);
         } catch (DateTimeParseException e) {
+            // Distinguish format errors from impossible calendar dates using a regex
+            // pre-check: if input structurally matches DD/MM/YYYY but fails strict
+            // parsing, the date is an impossible calendar date (e.g., 31/02/2020).
+            if (dobString.matches("^\\d{2}/\\d{2}/\\d{4}$")) {
+                throw new InvalidDateException("Invalid date. Please enter a real calendar date.");
+            }
             throw new InvalidDateException("Invalid date format. Please use DD/MM/YYYY.");
         }
 

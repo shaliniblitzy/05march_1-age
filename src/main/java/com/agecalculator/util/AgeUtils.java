@@ -3,6 +3,7 @@ package com.agecalculator.util;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.temporal.ChronoUnit;
+import java.util.Objects;
 
 /**
  * Utility class providing static helper methods for age-related calculations.
@@ -39,6 +40,7 @@ public class AgeUtils {
      * @return the total number of months between the DOB and the current date
      */
     public static long totalMonths(LocalDate dob) {
+        Objects.requireNonNull(dob, "Date of birth must not be null");
         return ChronoUnit.MONTHS.between(dob, LocalDate.now());
     }
 
@@ -52,6 +54,7 @@ public class AgeUtils {
      * @return the total number of days between the DOB and the current date
      */
     public static long totalDays(LocalDate dob) {
+        Objects.requireNonNull(dob, "Date of birth must not be null");
         return ChronoUnit.DAYS.between(dob, LocalDate.now());
     }
 
@@ -70,6 +73,7 @@ public class AgeUtils {
      * @return the number of days until the next birthday occurrence
      */
     public static long daysUntilNextBirthday(LocalDate dob) {
+        Objects.requireNonNull(dob, "Date of birth must not be null");
         LocalDate today = LocalDate.now();
 
         // Determine this year's birthday with leap year fallback for Feb 29 births

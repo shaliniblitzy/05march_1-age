@@ -67,8 +67,12 @@ public class AgeResult {
      *               representing remaining complete months after full years)
      * @param days   the days component of the age (integer in the range 0-30
      *               representing remaining days after full years and months)
+     * @throws IllegalArgumentException if any age component is negative
      */
     public AgeResult(int years, int months, int days) {
+        if (years < 0 || months < 0 || days < 0) {
+            throw new IllegalArgumentException("Age components must be non-negative");
+        }
         this.years = years;
         this.months = months;
         this.days = days;
