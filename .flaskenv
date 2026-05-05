@@ -1,4 +1,4 @@
-# .flaskenv -- Flask CLI defaults for local development.
+# .flaskenv — Flask CLI defaults for local development.
 # Loaded automatically by `flask` when python-dotenv is installed.
 # Committed to the repo (no secrets here). Use `.env` for secrets.
 FLASK_APP=wsgi:app
