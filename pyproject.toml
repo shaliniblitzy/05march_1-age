@@ -46,10 +46,6 @@ dev = [
     "responses==0.25.3",
 ]
 
-[project.urls]
-Homepage = ""
-Repository = ""
-
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["app*"]
